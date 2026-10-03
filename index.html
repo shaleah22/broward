@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Broward Parks & Trails Checklist</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F3F6F2; --surface:#FFFFFF; --ink:#16302C; --muted:#5B6F69;
@@ -30,16 +27,16 @@
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Verdana,Geneva,sans-serif;font-size:16px;line-height:1.5}
 .wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
-h1{font-family:"Young Serif",Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(2rem,6vw,3rem);line-height:1.08;margin:0 0 .6rem;color:var(--slough)}
+h1{font-family:Tahoma,Verdana,Geneva,sans-serif;font-weight:700;font-size:clamp(2rem,6vw,3rem);line-height:1.08;margin:0 0 .6rem;color:var(--slough)}
 .intro{color:var(--muted);max-width:60ch;margin:0 0 1.75rem}
 
 /* sawgrass horizon progress */
 .horizon{position:relative;height:56px;border-bottom:3px solid var(--slough);margin-bottom:.5rem;overflow:hidden}
 .horizon svg{position:absolute;inset:0;width:100%;height:100%}
 .count{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.75rem;color:var(--muted)}
-.count strong{font-family:"Young Serif",Georgia,serif;font-weight:400;font-size:1.6rem;color:var(--ink)}
+.count strong{font-family:Tahoma,Verdana,Geneva,sans-serif;font-weight:400;font-size:1.6rem;color:var(--ink)}
 
 .controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.75rem 0;margin-bottom:.5rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;border-bottom:1px solid var(--line)}
 .controls input[type=search]{flex:1 1 200px;font:inherit;padding:.55rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
@@ -48,10 +45,21 @@ h1{font-family:"Young Serif",Georgia,"Times New Roman",serif;font-weight:400;fon
 button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--spoonbill);outline-offset:2px}
 
 section{margin-top:2rem}
-h2{font-family:"Young Serif",Georgia,serif;font-weight:400;font-size:1.35rem;margin:0 0 .25rem;color:var(--slough);display:flex;justify-content:space-between;gap:1rem}
-h2 span{font-family:"Figtree",sans-serif;font-size:.9rem;color:var(--muted);align-self:center}
+h2{font-family:Tahoma,Verdana,Geneva,sans-serif;font-weight:700;font-size:1.35rem;margin:0 0 .25rem;color:var(--slough);display:flex;justify-content:space-between;gap:1rem}
+h2 span{font-family:Tahoma,Verdana,Geneva,sans-serif;font-size:.9rem;color:var(--muted);align-self:center}
 .sec-note{color:var(--muted);font-size:.92rem;margin:0 0 .5rem}
+h3{font-family:Tahoma,Verdana,Geneva,sans-serif;font-size:1rem;font-weight:700;margin:1.1rem 0 .3rem;color:var(--ink)}
+.tag{display:inline-block;font-size:.75rem;font-weight:400;color:var(--leaf);border:1px solid var(--line);border-radius:4px;padding:0 .35rem;margin-left:.15rem;vertical-align:1px}
 ul{list-style:none;margin:0;padding:0}
+.mapwrap{position:relative;margin:0 0 1rem}
+#map{position:relative;isolation:isolate;z-index:0;height:min(60vh,420px);border-radius:12px;border:1px solid var(--line);background:var(--surface);overflow:hidden}
+.mapmsg{position:absolute;inset:0;margin:0;display:none;align-items:center;justify-content:center;text-align:center;padding:1.5rem;color:var(--muted);font-size:.95rem}
+.mapmsg.show{display:flex}
+.iw{font-family:Tahoma,Verdana,Geneva,sans-serif;color:#16302C;max-width:240px}
+.iw strong{display:block;font-size:.95rem;margin-bottom:.2rem}
+.iw span{display:block;font-size:.82rem;color:#5B6F69;margin-bottom:.5rem}
+.iw button{font:inherit;font-size:.85rem;font-weight:700;background:#D9668A;color:#fff;border:none;border-radius:6px;padding:.4rem .7rem;cursor:pointer;margin-right:.4rem}
+.iw a{font-size:.85rem;color:#2F6B3E;font-weight:700}
 li{border-top:1px solid var(--line)}
 li:last-child{border-bottom:1px solid var(--line)}
 label.item{display:grid;grid-template-columns:auto 1fr;gap:.85rem;padding:.8rem .25rem;cursor:pointer;align-items:start}
@@ -74,7 +82,591 @@ li.leaving{transition:opacity .4s,transform .4s;opacity:0;transform:translateX(2
 footer{margin-top:3rem;color:var(--muted);font-size:.88rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
 footer button{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);padding:.4rem .8rem;border-radius:8px;cursor:pointer}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+/* Leaflet 1.9.4 */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+.leaflet-tile::selection {
+	background: transparent;
+}
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+.leaflet-container img.leaflet-tile {
+	mix-blend-mode: plus-lighter;
+}
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+.leaflet-pane         { z-index: 400; }
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: none;
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: none;
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+.leaflet-default-icon-path { 
+	background-image: none;
+	}
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+	margin: -10px auto 0;
+	pointer-events: auto;
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+@media print {
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+.leaflet-container{font-family:Tahoma,Verdana,Geneva,sans-serif}
+.flag-icon{background:none;border:none}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -84,8 +676,13 @@ footer button{font:inherit;background:none;border:1px solid var(--line);color:va
   <div class="horizon" aria-hidden="true"><svg id="grass" preserveAspectRatio="none" viewBox="0 0 100 56"></svg></div>
   <div class="count"><span><strong id="done">0</strong> of <span id="total">0</span> visited</span><span id="pct">0%</span></div>
 
+  <div class="mapwrap">
+    <div id="map" role="region" aria-label="Map of places not yet visited"></div>
+    <p id="mapmsg" class="mapmsg"></p>
+  </div>
+
   <div class="controls">
-    <input type="search" id="q" placeholder="Search by name or city" aria-label="Search parks">
+    <input type="search" id="q" placeholder="Search by name, city or area" aria-label="Search parks">
     <button class="chip" id="hide" aria-pressed="false">Show visited</button>
   </div>
 
@@ -107,14 +704,14 @@ const DATA = [
   ["Central Broward Park & Broward County Stadium","Lauderhill","Cricket stadium, lake path"],
   ["Deerfield Island Park","Deerfield Beach","Island reachable only by boat; coastal hammock trails"],
   ["Easterlin Park","Oakland Park","Old-growth cypress nature trail, camping"],
-  ["Everglades Holiday Park","Southwest Broward","Airboat rides into the Everglades"],
+  ["Everglades Holiday Park","Everglades","Airboat rides into the Everglades"],
   ["Fern Forest Nature Center","Coconut Creek","Cypress Creek boardwalk, Prairie Overlook trail"],
   ["Hollywood North Beach Park","Hollywood","Beach dunes, sea turtle nesting area"],
   ["Long Key Natural Area & Nature Center","Davie","Oak hammock trails, lake boardwalk, nature center"],
   ["Markham Park & Target Range","Sunrise","Mountain bike trails, observatory, Everglades views"],
   ["Plantation Heritage Park","Plantation","Lake loop, tropical fruit grove"],
   ["Quiet Waters Park","Deerfield Beach","Mountain bike trail, cable wakeboarding, camping"],
-  ["Secret Woods Nature Center","Dania Beach","Boardwalk along the New River"],
+  ["Secret Woods Nature Center","Fort Lauderdale","Boardwalk along the New River"],
   ["Tradewinds Park & Stables","Coconut Creek","Horseback trail rides, farm, gardens"],
   ["Tree Tops Park","Davie","Oak hammock ridge trail, observation tower, equestrian trails"],
   ["T.Y. (Topeekeegee Yugnee) Park","Hollywood","Lake loop, camping, water play"],
@@ -122,30 +719,30 @@ const DATA = [
  ]},
  {cat:"County natural areas", note:"Small protected habitats, mostly unstaffed, with short walking trails.", items:[
   ["Crystal Lake Sand Pine Scrub Natural Area","Pompano Beach","Rare coastal scrub ridge"],
-  ["Deerfield Highlands Nature Preserve","Deerfield Beach","Scrub habitat"],
+  ["Deerfield Highlands Nature Preserve","Pompano Beach","Scrub habitat"],
   ["Helene Klein Pineland Preserve","Coconut Creek","Pine flatwoods"],
   ["Highlands Scrub Natural Area","Pompano Beach","Scrub jays and gopher tortoises"],
-  ["Hillsboro Pineland Natural Area","Coconut Creek","Pine flatwoods"],
-  ["Military Trail Natural Area","Deerfield Beach","Pineland remnant"],
+  ["Hillsboro Pineland Natural Area","Coconut Creek","Now named Kristin Jacobs Natural Area; boardwalks around a lake"],
+  ["Military Trail Natural Area","Pompano Beach","Pineland remnant"],
   ["Miramar Pineland","Miramar","Pine rockland"],
   ["Pine Island Ridge Natural Area","Davie","Highest natural ridge in the county; hammock trail"],
   ["Pond Apple Slough Natural Area","Fort Lauderdale","Swamp boardwalk"],
-  ["Saw Palmetto Natural Area","","Pine flatwoods"],
+  ["Saw Palmetto Natural Area","Coconut Creek","Pine flatwoods and an observation platform"],
   ["Snake Warrior's Island Natural Area","Miramar","Seminole history site, hammock trail"],
   ["Tall Cypress Natural Area","Coral Springs","Cypress swamp boardwalk"],
-  ["West Creek Pineland Natural Area","","Pine flatwoods"],
+  ["West Creek Pineland Natural Area","Coconut Creek","Tiny pineland on the C-5 canal; park at Helene Klein across Hillsboro Blvd"],
   ["Woodmont Natural Area","Tamarac","Cypress and pine wetlands"]
  ]},
  {cat:"County neighborhood parks", note:"Smaller community parks the county runs directly.", items:[
-  ["Franklin Park","Fort Lauderdale area",""],
-  ["Lafayette Hart Park","Fort Lauderdale area",""],
-  ["Reverend Samuel Delevoe Memorial Park","Fort Lauderdale area",""],
-  ["Roosevelt Gardens Park","Fort Lauderdale area",""]
+  ["Franklin Park","Fort Lauderdale",""],
+  ["Lafayette Hart Park","Fort Lauderdale",""],
+  ["Reverend Samuel Delevoe Memorial Park","Fort Lauderdale",""],
+  ["Roosevelt Gardens Park","Fort Lauderdale",""]
  ]},
  {cat:"State parks & wildlife areas", note:"Run by the State of Florida; state park entry fees apply.", items:[
   ["Hugh Taylor Birch State Park","Fort Lauderdale","Coastal hammock trails, kayaking, beach access"],
   ["Dr. Von D. Mizell-Eula Johnson State Park","Dania Beach","Beach, mangrove paddling, nature trail"],
-  ["Everglades & Francis S. Taylor Wildlife Management Area","Western Broward","Levee hiking and biking into the Everglades"]
+  ["Everglades & Francis S. Taylor Wildlife Management Area","Everglades","Levee hiking and biking into the Everglades"]
  ]},
  {cat:"City preserves & nature parks", note:"City-run and private spots worth adding. Not every city park is listed.", items:[
   ["Snyder Park","Fort Lauderdale","Spring-fed lakes, nature trail"],
@@ -168,8 +765,8 @@ const DATA = [
   ["Plantation Preserve Linear Trail","Plantation","Paved multi-use trail"],
   ["Fort Lauderdale Riverwalk","Fort Lauderdale","Downtown path along the New River"],
   ["Hollywood Beach Broadwalk","Hollywood","Oceanfront promenade, about 2.5 miles"],
-  ["New River Greenway","Central Broward","Multi-use path along the New River"],
-  ["Conservation Levee Greenway","Western Broward","Levee trail along the Everglades edge"]
+  ["New River Greenway","Multi-city","Multi-use path along the New River"],
+  ["Conservation Levee Greenway","Multi-city","Levee trail along the Everglades edge"]
  ]}
 ];
 
@@ -184,36 +781,54 @@ document.getElementById("total").textContent=total;
 let query="",hide=true;
 const list=document.getElementById("list");
 
+const TAGS={"County regional parks & nature centers":"County park","County natural areas":"Natural area","County neighborhood parks":"County park","State parks & wildlife areas":"State park","City preserves & nature parks":"City preserve","Greenways & long trails":"Trail"};
+const REGIONS=[
+ {name:"North Broward",sub:"Parkland to Pompano Beach",cities:["Parkland","Coral Springs","Coconut Creek","Deerfield Beach","Pompano Beach","Tamarac"]},
+ {name:"Central Broward",sub:"Fort Lauderdale and nearby cities",cities:["Oakland Park","Wilton Manors","Fort Lauderdale","Lauderhill","Plantation"]},
+ {name:"West Broward & the Everglades",sub:"Sunrise, Davie, Weston and out to the Everglades",cities:["Sunrise","Davie","Weston","Everglades"]},
+ {name:"South Broward",sub:"Hollywood, Dania Beach and the southwest suburbs",cities:["Cooper City","Pembroke Pines","Miramar","Hollywood","Dania Beach"]},
+ {name:"Long-distance trails",sub:"Routes that cross several cities",cities:["Multi-city"]}
+];
+const ALL=[];
+DATA.forEach(sec=>sec.items.forEach(([n,c,note])=>ALL.push({n,c,note,tag:TAGS[sec.cat]})));
+
 function render(){
   list.innerHTML="";
   let shown=0;
-  DATA.forEach(sec=>{
-    const items=sec.items.filter(([n,c])=>{
-      const m=(n+" "+c).toLowerCase().includes(query);
-      return m && !(hide && state[idOf(n)]);
-    });
-    if(!items.length) return;
-    shown+=items.length;
-    const done=sec.items.filter(([n])=>state[idOf(n)]).length;
+  REGIONS.forEach(reg=>{
+    const inReg=ALL.filter(x=>reg.cities.includes(x.c));
+    const vis=inReg.filter(x=>(x.n+" "+x.c+" "+reg.name).toLowerCase().includes(query) && !(hide && state[idOf(x.n)]));
+    if(!vis.length) return;
+    shown+=vis.length;
+    const done=inReg.filter(x=>state[idOf(x.n)]).length;
     const s=document.createElement("section");
-    s.innerHTML=`<h2>${sec.cat}<span>${done}/${sec.items.length}</span></h2><p class="sec-note">${sec.note}</p>`;
-    const ul=document.createElement("ul");
-    items.forEach(([n,c,note])=>{
-      const id=idOf(n);
-      const li=document.createElement("li");
-      if(state[id]) li.className="done";
-      li.innerHTML=`<label class="item"><input type="checkbox" ${state[id]?"checked":""}><span><span class="name">${n}</span>${c?` <span class="city">${c}</span>`:""}${note?`<span class="note">${note}</span>`:""}</span></label><a class="photos" target="_blank" rel="noopener" href="${mapUrl(n,c)}" aria-label="Photos and map of ${n}">Photos</a>`;
-      li.querySelector("input").addEventListener("change",e=>{
-        if(e.target.checked) state[id]=true; else delete state[id];
-        save();
-        if(e.target.checked && hide && !matchMedia("(prefers-reduced-motion: reduce)").matches){
-          li.classList.add("done","leaving");
-          setTimeout(render,450);
-        } else render();
+    s.innerHTML=`<h2>${reg.name}<span>${done}/${inReg.length}</span></h2><p class="sec-note">${reg.sub}</p>`;
+    reg.cities.forEach(city=>{
+      const items=vis.filter(x=>x.c===city).sort((a,b)=>a.n.localeCompare(b.n));
+      if(!items.length) return;
+      if(city!=="Multi-city"){
+        const h=document.createElement("h3");
+        h.textContent=city;
+        s.appendChild(h);
+      }
+      const ul=document.createElement("ul");
+      items.forEach(({n,c,note,tag})=>{
+        const id=idOf(n);
+        const li=document.createElement("li");
+        if(state[id]) li.className="done";
+        li.innerHTML=`<label class="item"><input type="checkbox" ${state[id]?"checked":""}><span><span class="name">${n}</span> <span class="tag">${tag}</span>${note?`<span class="note">${note}</span>`:""}</span></label><a class="photos" target="_blank" rel="noopener" href="${mapUrl(n,c)}" aria-label="Photos and map of ${n}">Photos</a>`;
+        li.querySelector("input").addEventListener("change",e=>{
+          if(e.target.checked) state[id]=true; else delete state[id];
+          save();
+          if(e.target.checked && hide && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+            li.classList.add("done","leaving");
+            setTimeout(render,450);
+          } else render();
+        });
+        ul.appendChild(li);
       });
-      ul.appendChild(li);
+      s.appendChild(ul);
     });
-    s.appendChild(ul);
     list.appendChild(s);
   });
   if(!shown) list.innerHTML=`<p class="empty">${hide&&!query?"You've visited every place on the list. Tap Show visited to see them all.":"No parks match that search. Try a city name."}</p>`;
@@ -221,6 +836,7 @@ function render(){
 }
 
 function updateProgress(){
+  syncMarkers();
   const d=Object.keys(state).length;
   document.getElementById("done").textContent=d;
   document.getElementById("pct").textContent=Math.round(d/total*100)+"%";
@@ -236,9 +852,59 @@ function updateProgress(){
 }
 
 function mapUrl(n,c){
-  const place=/area|broward/i.test(c)||!c ? "Broward County" : c;
+  const place=!c||c==="Multi-city" ? "Broward County" : c;
   return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(n+", "+place+", FL");
 }
+
+/* ---------- Map (OpenStreetMap via Leaflet, free, no key needed) ---------- */
+const COORDS={"Anne Kolb Nature Center at West Lake Park": [26.0386, -80.1196], "Boaters Park": [26.0683, -80.1741], "Brian Piccolo Sports Park & Velodrome": [26.031, -80.2715], "C.B. Smith Park": [26.016, -80.3159], "Central Broward Park & Broward County Stadium": [26.1401, -80.1987], "Deerfield Island Park": [26.3189, -80.0836], "Easterlin Park": [26.1713, -80.1609], "Everglades Holiday Park": [26.0609, -80.4449], "Fern Forest Nature Center": [26.2298, -80.1858], "Hollywood North Beach Park": [26.0342, -80.1149], "Long Key Natural Area & Nature Center": [26.0751, -80.3244], "Markham Park & Target Range": [26.1335, -80.3521], "Plantation Heritage Park": [26.1068, -80.2309], "Quiet Waters Park": [26.3088, -80.1563], "Secret Woods Nature Center": [26.0884, -80.1781], "Tradewinds Park & Stables": [26.2738, -80.1743], "Tree Tops Park": [26.0715, -80.2762], "T.Y. (Topeekeegee Yugnee) Park": [26.0369, -80.1745], "Vista View Park": [26.0705, -80.343], "Crystal Lake Sand Pine Scrub Natural Area": [26.2715, -80.1195], "Deerfield Highlands Nature Preserve": [26.2817, -80.1144], "Helene Klein Pineland Preserve": [26.3185, -80.188], "Highlands Scrub Natural Area": [26.2811, -80.1114], "Hillsboro Pineland Natural Area": [26.3232, -80.1992], "Military Trail Natural Area": [26.2867, -80.1338], "Miramar Pineland": [25.9774, -80.2475], "Pine Island Ridge Natural Area": [26.0887, -80.283], "Pond Apple Slough Natural Area": [26.0805, -80.1945], "Saw Palmetto Natural Area": [26.3192, -80.1922], "Snake Warrior's Island Natural Area": [25.9773, -80.2106], "Tall Cypress Natural Area": [26.2766, -80.2134], "West Creek Pineland Natural Area": [26.3166, -80.1886], "Woodmont Natural Area": [26.2144, -80.2585], "Franklin Park": [26.1348, -80.176], "Lafayette Hart Park": [26.1331, -80.1817], "Reverend Samuel Delevoe Memorial Park": [26.1285, -80.1755], "Roosevelt Gardens Park": [26.1385, -80.1816], "Hugh Taylor Birch State Park": [26.1454, -80.105], "Dr. Von D. Mizell-Eula Johnson State Park": [26.0741, -80.1121], "Everglades & Francis S. Taylor Wildlife Management Area": [26.1486, -80.6305], "Snyder Park": [26.0827, -80.1482], "Colohatchee Park": [26.1539, -80.1299], "Richardson Historic Park & Nature Preserve": [26.1521, -80.1413], "Island City Park Preserve": [26.1631, -80.1358], "Holland Park": [26.0195, -80.1208], "Chapel Trail Nature Preserve": [26.0288, -80.4132], "Peace Mound Park": [26.1042, -80.3691], "Robbins Lodge & Preserve": [26.0712, -80.2981], "Sawgrass Nature Center & Wildlife Hospital": [26.2689, -80.2941], "Sabal Pines Park": [26.2926, -80.1784], "Pine Trails Park": [26.3228, -80.2682], "Deerfield Beach Arboretum": [26.3186, -80.1427], "Flamingo Gardens": [26.0742, -80.3133], "Butterfly World": [26.2687, -80.1714], "Bonnet House Museum & Gardens": [26.1364, -80.1069], "Plantation Preserve Linear Trail": [26.1189, -80.2408], "Fort Lauderdale Riverwalk": [26.1189, -80.143], "Hollywood Beach Broadwalk": [26.011, -80.1158], "New River Greenway": [26.1142, -80.3084], "Conservation Levee Greenway": [26.1303, -80.365]};
+
+let lmap=null;
+const markers={};
+const mapMsg=t=>{const m=document.getElementById("mapmsg");m.textContent=t;m.classList.toggle("show",!!t)};
+const FLAG='<svg width="26" height="34" viewBox="0 0 26 34" aria-hidden="true"><line x1="4" y1="2" x2="4" y2="33" stroke="#16302C" stroke-width="2.5" stroke-linecap="round"/><path d="M5 3 L23 8.5 L5 14 Z" fill="#D9668A" stroke="#16302C" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+
+function syncMarkers(){
+  if(!lmap) return;
+  let left=0;
+  Object.entries(markers).forEach(([id,m])=>{
+    if(state[id]){ if(lmap.hasLayer(m)) lmap.removeLayer(m); }
+    else { left++; if(!lmap.hasLayer(m)) m.addTo(lmap); }
+  });
+  if(!left) mapMsg("Every place on the map is visited. Nice work.");
+  else if(document.getElementById("mapmsg").textContent.startsWith("Every")) mapMsg("");
+}
+
+function initMap(){
+  if(typeof L==="undefined"){ mapMsg("The map can't load here. It will appear once this page is on your website."); return; }
+  lmap=L.map("map",{scrollWheelZoom:false});
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(lmap);
+  const icon=L.divIcon({className:"flag-icon",html:FLAG,iconSize:[26,34],iconAnchor:[4,33],popupAnchor:[9,-30]});
+  const pts=[];
+  ALL.forEach(({n,c,note})=>{
+    const xy=COORDS[n]; if(!xy) return;
+    const id=idOf(n);
+    const mk=L.marker(xy,{icon,title:n,alt:n,keyboard:true});
+    mk.bindPopup(()=>{
+      const box=document.createElement("div"); box.className="iw";
+      box.innerHTML=`<strong>${n}</strong><span>${c==="Multi-city"?"Long-distance trail":c}${note?" &middot; "+note:""}</span>`;
+      const btn=document.createElement("button"); btn.textContent="Mark visited";
+      btn.onclick=()=>{ state[id]=true; save(); lmap.closePopup(); render(); };
+      const dir=document.createElement("a"); dir.textContent="Directions"; dir.target="_blank"; dir.rel="noopener";
+      dir.href="https://www.google.com/maps/dir/?api=1&destination="+xy[0]+","+xy[1];
+      box.append(btn,dir);
+      return box;
+    });
+    markers[id]=mk; pts.push(xy);
+  });
+  lmap.fitBounds(pts,{padding:[30,30]});
+  syncMarkers();
+}
+initMap();
+
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 document.getElementById("hide").addEventListener("click",e=>{hide=!hide;e.target.setAttribute("aria-pressed",!hide);render()});
 document.getElementById("reset").addEventListener("click",()=>{if(confirm("Clear every check?")){state={};save();render()}});
