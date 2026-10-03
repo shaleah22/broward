@@ -70,13 +70,7 @@ li label.item{flex:1}
 .photos{flex:none;margin-top:.8rem;font-size:.88rem;font-weight:600;color:var(--leaf);text-decoration:none;padding:.3rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);white-space:nowrap}
 .photos:hover{border-color:var(--leaf)}
 .photos:focus-visible{outline:2px solid var(--spoonbill);outline-offset:2px}
-.copybox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;margin:0 0 1.5rem}
-.copybox p{margin:0 0 .6rem;color:var(--muted);font-size:.92rem}
-.copybox .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-.copybox .act{font:inherit;font-weight:600;background:var(--slough);color:var(--bg);border:none;border-radius:8px;padding:.5rem .9rem;cursor:pointer}
-.copybox .alt{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:.5rem .9rem;cursor:pointer}
 li.leaving{transition:opacity .4s,transform .4s;opacity:0;transform:translateX(24px)}
-#copied{color:var(--leaf);font-weight:600;font-size:.92rem}
 footer{margin-top:3rem;color:var(--muted);font-size:.88rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
 footer button{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);padding:.4rem .8rem;border-radius:8px;cursor:pointer}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -89,15 +83,6 @@ footer button{font:inherit;background:none;border:1px solid var(--line);color:va
 
   <div class="horizon" aria-hidden="true"><svg id="grass" preserveAspectRatio="none" viewBox="0 0 100 56"></svg></div>
   <div class="count"><span><strong id="done">0</strong> of <span id="total">0</span> visited</span><span id="pct">0%</span></div>
-
-  <div class="copybox">
-    <p>To move this list to Apple Reminders: copy it, open Reminders, start a new reminder, and paste. Each line becomes its own reminder.</p>
-    <div class="row">
-      <button class="act" id="copyLeft">Copy places not yet visited</button>
-      <button class="alt" id="copyAll">Copy all places</button>
-      <span id="copied" role="status"></span>
-    </div>
-  </div>
 
   <div class="controls">
     <input type="search" id="q" placeholder="Search by name or city" aria-label="Search parks">
@@ -254,27 +239,6 @@ function mapUrl(n,c){
   const place=/area|broward/i.test(c)||!c ? "Broward County" : c;
   return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(n+", "+place+", FL");
 }
-async function copyList(onlyLeft){
-  const lines=[];
-  DATA.forEach(sec=>sec.items.forEach(([n,c])=>{
-    if(onlyLeft && state[idOf(n)]) return;
-    lines.push(c ? `${n} (${c})` : n);
-  }));
-  const text=lines.join("\n");
-  const msg=document.getElementById("copied");
-  let ok=false;
-  try{await navigator.clipboard.writeText(text);ok=true}catch(e){
-    try{
-      const ta=document.createElement("textarea");
-      ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
-      document.body.appendChild(ta);ta.select();ok=document.execCommand("copy");ta.remove();
-    }catch(e2){ok=false}
-  }
-  msg.textContent=ok?`Copied ${lines.length} places. Paste into Reminders.`:"Copy was blocked by the browser. Open this page in its own tab and try again.";
-}
-document.getElementById("copyLeft").addEventListener("click",()=>copyList(true));
-document.getElementById("copyAll").addEventListener("click",()=>copyList(false));
-
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 document.getElementById("hide").addEventListener("click",e=>{hide=!hide;e.target.setAttribute("aria-pressed",!hide);render()});
 document.getElementById("reset").addEventListener("click",()=>{if(confirm("Clear every check?")){state={};save();render()}});
