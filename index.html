@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Broward Parks & Trails Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F6F2; --surface:#FFFFFF; --ink:#16302C; --muted:#5B6F69;
+  --line:#D7E1DB; --slough:#0F3B3A; --grass:#B49A3E; --leaf:#2F6B3E;
+  --spoonbill:#D9668A; --spoon-soft:#F7DCE5;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1B19; --surface:#152724; --ink:#E4EEE9; --muted:#9DB2AB;
+    --line:#284340; --slough:#9FD3C9; --grass:#D6BE62; --leaf:#7DBB8B;
+    --spoonbill:#F08AAB; --spoon-soft:#3A2230;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1B19; --surface:#152724; --ink:#E4EEE9; --muted:#9DB2AB;
+  --line:#284340; --slough:#9FD3C9; --grass:#D6BE62; --leaf:#7DBB8B;
+  --spoonbill:#F08AAB; --spoon-soft:#3A2230;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1{font-family:"Young Serif",Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(2rem,6vw,3rem);line-height:1.08;margin:0 0 .6rem;color:var(--slough)}
+.intro{color:var(--muted);max-width:60ch;margin:0 0 1.75rem}
+
+/* sawgrass horizon progress */
+.horizon{position:relative;height:56px;border-bottom:3px solid var(--slough);margin-bottom:.5rem;overflow:hidden}
+.horizon svg{position:absolute;inset:0;width:100%;height:100%}
+.count{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.75rem;color:var(--muted)}
+.count strong{font-family:"Young Serif",Georgia,serif;font-weight:400;font-size:1.6rem;color:var(--ink)}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:.75rem 0;margin-bottom:.5rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;border-bottom:1px solid var(--line)}
+.controls input[type=search]{flex:1 1 200px;font:inherit;padding:.55rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.chip{font:inherit;font-size:.9rem;padding:.4rem .8rem;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--slough);color:var(--bg);border-color:var(--slough)}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--spoonbill);outline-offset:2px}
+
+section{margin-top:2rem}
+h2{font-family:"Young Serif",Georgia,serif;font-weight:400;font-size:1.35rem;margin:0 0 .25rem;color:var(--slough);display:flex;justify-content:space-between;gap:1rem}
+h2 span{font-family:"Figtree",sans-serif;font-size:.9rem;color:var(--muted);align-self:center}
+.sec-note{color:var(--muted);font-size:.92rem;margin:0 0 .5rem}
+ul{list-style:none;margin:0;padding:0}
+li{border-top:1px solid var(--line)}
+li:last-child{border-bottom:1px solid var(--line)}
+label.item{display:grid;grid-template-columns:auto 1fr;gap:.85rem;padding:.8rem .25rem;cursor:pointer;align-items:start}
+.item input{appearance:none;width:24px;height:24px;margin:2px 0 0;border:2px solid var(--leaf);border-radius:50%;display:grid;place-content:center;cursor:pointer;background:var(--surface);transition:background .15s}
+.item input::after{content:"";width:10px;height:6px;border:solid var(--surface);border-width:0 0 2.5px 2.5px;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.item input:checked{background:var(--spoonbill);border-color:var(--spoonbill)}
+.item input:checked::after{opacity:1}
+.name{font-weight:600}
+.city{color:var(--muted);font-weight:400}
+.note{display:block;color:var(--muted);font-size:.92rem}
+li.done .name{text-decoration:line-through;text-decoration-color:var(--spoonbill);text-decoration-thickness:2px}
+li.done{background:linear-gradient(90deg,var(--spoon-soft),transparent 70%)}
+.empty{color:var(--muted);padding:1rem 0}
+li{display:flex;align-items:flex-start;gap:.5rem}
+li label.item{flex:1}
+.photos{flex:none;margin-top:.8rem;font-size:.88rem;font-weight:600;color:var(--leaf);text-decoration:none;padding:.3rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);white-space:nowrap}
+.photos:hover{border-color:var(--leaf)}
+.photos:focus-visible{outline:2px solid var(--spoonbill);outline-offset:2px}
+.copybox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;margin:0 0 1.5rem}
+.copybox p{margin:0 0 .6rem;color:var(--muted);font-size:.92rem}
+.copybox .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.copybox .act{font:inherit;font-weight:600;background:var(--slough);color:var(--bg);border:none;border-radius:8px;padding:.5rem .9rem;cursor:pointer}
+.copybox .alt{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:.5rem .9rem;cursor:pointer}
+li.leaving{transition:opacity .4s,transform .4s;opacity:0;transform:translateX(24px)}
+#copied{color:var(--leaf);font-weight:600;font-size:.92rem}
+footer{margin-top:3rem;color:var(--muted);font-size:.88rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+footer button{font:inherit;background:none;border:1px solid var(--line);color:var(--ink);padding:.4rem .8rem;border-radius:8px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Broward parks &amp; nature trails</h1>
+  <p class="intro">Every Broward County park, nature center and natural area, plus the state parks and the standout city preserves and trails. Tick them off as you go; your progress stays saved in this browser.</p>
+
+  <div class="horizon" aria-hidden="true"><svg id="grass" preserveAspectRatio="none" viewBox="0 0 100 56"></svg></div>
+  <div class="count"><span><strong id="done">0</strong> of <span id="total">0</span> visited</span><span id="pct">0%</span></div>
+
+  <div class="copybox">
+    <p>To move this list to Apple Reminders: copy it, open Reminders, start a new reminder, and paste. Each line becomes its own reminder.</p>
+    <div class="row">
+      <button class="act" id="copyLeft">Copy places not yet visited</button>
+      <button class="alt" id="copyAll">Copy all places</button>
+      <span id="copied" role="status"></span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search by name or city" aria-label="Search parks">
+    <button class="chip" id="hide" aria-pressed="false">Show visited</button>
+  </div>
+
+  <div id="list"></div>
+
+  <footer>
+    <span>Hours and fees change; check broward.org/parks before you go.</span>
+    <button id="reset">Clear all checks</button>
+  </footer>
+</div>
+
+<script>
+const DATA = [
+ {cat:"County regional parks & nature centers", note:"Run by Broward County Parks. Many charge a small weekend entry fee.", items:[
+  ["Anne Kolb Nature Center at West Lake Park","Hollywood","Mangrove boardwalks, observation tower, kayak trails"],
+  ["Boaters Park","Fort Lauderdale","Riverside picnic spot on the North New River Canal"],
+  ["Brian Piccolo Sports Park & Velodrome","Cooper City","Outdoor velodrome, skate park, walking paths"],
+  ["C.B. Smith Park","Pembroke Pines","Camping, water park, lake loop trail"],
+  ["Central Broward Park & Broward County Stadium","Lauderhill","Cricket stadium, lake path"],
+  ["Deerfield Island Park","Deerfield Beach","Island reachable only by boat; coastal hammock trails"],
+  ["Easterlin Park","Oakland Park","Old-growth cypress nature trail, camping"],
+  ["Everglades Holiday Park","Southwest Broward","Airboat rides into the Everglades"],
+  ["Fern Forest Nature Center","Coconut Creek","Cypress Creek boardwalk, Prairie Overlook trail"],
+  ["Hollywood North Beach Park","Hollywood","Beach dunes, sea turtle nesting area"],
+  ["Long Key Natural Area & Nature Center","Davie","Oak hammock trails, lake boardwalk, nature center"],
+  ["Markham Park & Target Range","Sunrise","Mountain bike trails, observatory, Everglades views"],
+  ["Plantation Heritage Park","Plantation","Lake loop, tropical fruit grove"],
+  ["Quiet Waters Park","Deerfield Beach","Mountain bike trail, cable wakeboarding, camping"],
+  ["Secret Woods Nature Center","Dania Beach","Boardwalk along the New River"],
+  ["Tradewinds Park & Stables","Coconut Creek","Horseback trail rides, farm, gardens"],
+  ["Tree Tops Park","Davie","Oak hammock ridge trail, observation tower, equestrian trails"],
+  ["T.Y. (Topeekeegee Yugnee) Park","Hollywood","Lake loop, camping, water play"],
+  ["Vista View Park","Davie","Hilltop views, equestrian and hiking trails"]
+ ]},
+ {cat:"County natural areas", note:"Small protected habitats, mostly unstaffed, with short walking trails.", items:[
+  ["Crystal Lake Sand Pine Scrub Natural Area","Pompano Beach","Rare coastal scrub ridge"],
+  ["Deerfield Highlands Nature Preserve","Deerfield Beach","Scrub habitat"],
+  ["Helene Klein Pineland Preserve","Coconut Creek","Pine flatwoods"],
+  ["Highlands Scrub Natural Area","Pompano Beach","Scrub jays and gopher tortoises"],
+  ["Hillsboro Pineland Natural Area","Coconut Creek","Pine flatwoods"],
+  ["Military Trail Natural Area","Deerfield Beach","Pineland remnant"],
+  ["Miramar Pineland","Miramar","Pine rockland"],
+  ["Pine Island Ridge Natural Area","Davie","Highest natural ridge in the county; hammock trail"],
+  ["Pond Apple Slough Natural Area","Fort Lauderdale","Swamp boardwalk"],
+  ["Saw Palmetto Natural Area","","Pine flatwoods"],
+  ["Snake Warrior's Island Natural Area","Miramar","Seminole history site, hammock trail"],
+  ["Tall Cypress Natural Area","Coral Springs","Cypress swamp boardwalk"],
+  ["West Creek Pineland Natural Area","","Pine flatwoods"],
+  ["Woodmont Natural Area","Tamarac","Cypress and pine wetlands"]
+ ]},
+ {cat:"County neighborhood parks", note:"Smaller community parks the county runs directly.", items:[
+  ["Franklin Park","Fort Lauderdale area",""],
+  ["Lafayette Hart Park","Fort Lauderdale area",""],
+  ["Reverend Samuel Delevoe Memorial Park","Fort Lauderdale area",""],
+  ["Roosevelt Gardens Park","Fort Lauderdale area",""]
+ ]},
+ {cat:"State parks & wildlife areas", note:"Run by the State of Florida; state park entry fees apply.", items:[
+  ["Hugh Taylor Birch State Park","Fort Lauderdale","Coastal hammock trails, kayaking, beach access"],
+  ["Dr. Von D. Mizell-Eula Johnson State Park","Dania Beach","Beach, mangrove paddling, nature trail"],
+  ["Everglades & Francis S. Taylor Wildlife Management Area","Western Broward","Levee hiking and biking into the Everglades"]
+ ]},
+ {cat:"City preserves & nature parks", note:"City-run and private spots worth adding. Not every city park is listed.", items:[
+  ["Snyder Park","Fort Lauderdale","Spring-fed lakes, nature trail"],
+  ["Colohatchee Park","Wilton Manors","Mangrove boardwalk on the Middle River"],
+  ["Richardson Historic Park & Nature Preserve","Wilton Manors","Shaded preserve on the river"],
+  ["Island City Park Preserve","Wilton Manors","Walking trail, river views"],
+  ["Holland Park","Hollywood","Intracoastal mangroves, kayak launch"],
+  ["Chapel Trail Nature Preserve","Pembroke Pines","Long boardwalk over Everglades marsh"],
+  ["Peace Mound Park","Weston","Hilltop lake views"],
+  ["Robbins Lodge & Preserve","Davie","Hiking and equestrian trails"],
+  ["Sawgrass Nature Center & Wildlife Hospital","Coral Springs","Wildlife rehab, short nature trail"],
+  ["Sabal Pines Park","Coconut Creek","Pine flatwoods trail"],
+  ["Pine Trails Park","Parkland","Walking paths, preserve"],
+  ["Deerfield Beach Arboretum","Deerfield Beach","Tropical plant collection"],
+  ["Flamingo Gardens","Davie","Botanical garden and wildlife sanctuary (admission)"],
+  ["Butterfly World","Coconut Creek","Butterfly aviaries inside Tradewinds Park (admission)"],
+  ["Bonnet House Museum & Gardens","Fort Lauderdale","Historic estate with coastal gardens (admission)"]
+ ]},
+ {cat:"Greenways & long trails", note:"Paths built for walking, running and biking end to end.", items:[
+  ["Plantation Preserve Linear Trail","Plantation","Paved multi-use trail"],
+  ["Fort Lauderdale Riverwalk","Fort Lauderdale","Downtown path along the New River"],
+  ["Hollywood Beach Broadwalk","Hollywood","Oceanfront promenade, about 2.5 miles"],
+  ["New River Greenway","Central Broward","Multi-use path along the New River"],
+  ["Conservation Levee Greenway","Western Broward","Levee trail along the Everglades edge"]
+ ]}
+];
+
+const KEY="broward-parks-v1";
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){state={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const idOf=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+const total=DATA.reduce((a,s)=>a+s.items.length,0);
+document.getElementById("total").textContent=total;
+
+let query="",hide=true;
+const list=document.getElementById("list");
+
+function render(){
+  list.innerHTML="";
+  let shown=0;
+  DATA.forEach(sec=>{
+    const items=sec.items.filter(([n,c])=>{
+      const m=(n+" "+c).toLowerCase().includes(query);
+      return m && !(hide && state[idOf(n)]);
+    });
+    if(!items.length) return;
+    shown+=items.length;
+    const done=sec.items.filter(([n])=>state[idOf(n)]).length;
+    const s=document.createElement("section");
+    s.innerHTML=`<h2>${sec.cat}<span>${done}/${sec.items.length}</span></h2><p class="sec-note">${sec.note}</p>`;
+    const ul=document.createElement("ul");
+    items.forEach(([n,c,note])=>{
+      const id=idOf(n);
+      const li=document.createElement("li");
+      if(state[id]) li.className="done";
+      li.innerHTML=`<label class="item"><input type="checkbox" ${state[id]?"checked":""}><span><span class="name">${n}</span>${c?` <span class="city">${c}</span>`:""}${note?`<span class="note">${note}</span>`:""}</span></label><a class="photos" target="_blank" rel="noopener" href="${mapUrl(n,c)}" aria-label="Photos and map of ${n}">Photos</a>`;
+      li.querySelector("input").addEventListener("change",e=>{
+        if(e.target.checked) state[id]=true; else delete state[id];
+        save();
+        if(e.target.checked && hide && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+          li.classList.add("done","leaving");
+          setTimeout(render,450);
+        } else render();
+      });
+      ul.appendChild(li);
+    });
+    s.appendChild(ul);
+    list.appendChild(s);
+  });
+  if(!shown) list.innerHTML=`<p class="empty">${hide&&!query?"You've visited every place on the list. Tap Show visited to see them all.":"No parks match that search. Try a city name."}</p>`;
+  updateProgress();
+}
+
+function updateProgress(){
+  const d=Object.keys(state).length;
+  document.getElementById("done").textContent=d;
+  document.getElementById("pct").textContent=Math.round(d/total*100)+"%";
+  // sawgrass blades grow across the horizon as you visit places
+  const svg=document.getElementById("grass");
+  const blades=total, frac=d/total; let out="";
+  for(let i=0;i<blades;i++){
+    const x=(i+.5)*100/blades, grown=i<Math.round(frac*blades);
+    const h=grown?28+((i*37)%24):6, lean=((i*13)%7)-3;
+    out+=`<path d="M${x-.6} 56 Q${x+lean/2} ${56-h/2} ${x+lean} ${56-h} Q${x+lean/3} ${56-h/2} ${x+.6} 56Z" fill="${grown?"var(--grass)":"var(--line)"}"/>`;
+  }
+  svg.innerHTML=out;
+}
+
+function mapUrl(n,c){
+  const place=/area|broward/i.test(c)||!c ? "Broward County" : c;
+  return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(n+", "+place+", FL");
+}
+async function copyList(onlyLeft){
+  const lines=[];
+  DATA.forEach(sec=>sec.items.forEach(([n,c])=>{
+    if(onlyLeft && state[idOf(n)]) return;
+    lines.push(c ? `${n} (${c})` : n);
+  }));
+  const text=lines.join("\n");
+  const msg=document.getElementById("copied");
+  let ok=false;
+  try{await navigator.clipboard.writeText(text);ok=true}catch(e){
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+      document.body.appendChild(ta);ta.select();ok=document.execCommand("copy");ta.remove();
+    }catch(e2){ok=false}
+  }
+  msg.textContent=ok?`Copied ${lines.length} places. Paste into Reminders.`:"Copy was blocked by the browser. Open this page in its own tab and try again.";
+}
+document.getElementById("copyLeft").addEventListener("click",()=>copyList(true));
+document.getElementById("copyAll").addEventListener("click",()=>copyList(false));
+
+document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
+document.getElementById("hide").addEventListener("click",e=>{hide=!hide;e.target.setAttribute("aria-pressed",!hide);render()});
+document.getElementById("reset").addEventListener("click",()=>{if(confirm("Clear every check?")){state={};save();render()}});
+render();
+</script>
+</body>
+</html>
